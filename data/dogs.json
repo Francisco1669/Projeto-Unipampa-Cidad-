@@ -1,0 +1,129 @@
+{
+  "dogs": [
+    {
+      "id": "1",
+      "name": "Thor",
+      "age": "Adulto",
+      "size": "Grande",
+      "personality": "Protetor",
+      "city": "Porto Alegre",
+      "description": "Thor é um cão leal e protetor, perfeito para famílias que buscam segurança e companheirismo.",
+      "story": "Thor foi encontrado em um abrigo após ser abandonado por sua família anterior. Apesar do trauma, ele mantém um coração enorme e muita vontade de amar novamente. Ele é calmo em casa, mas adora passear e brincar ao ar livre.",
+      "image": "https://images.unsplash.com/photo-1568572933382-74d440642117?w=800&q=80",
+      "adopted": false
+    },
+    {
+      "id": "2",
+      "name": "Luna",
+      "age": "Filhote",
+      "size": "Médio",
+      "personality": "Brincalhão",
+      "city": "São Paulo",
+      "description": "Luna é uma filhote cheia de energia que adora brincar e fazer novos amigos.",
+      "story": "Luna foi resgatada de uma situação de maus-tratos quando tinha apenas 2 meses. Hoje, ela é uma cachorrinha feliz, curiosa e cheia de vida. Ela adora aprender truques novos e está sempre pronta para uma aventura.",
+      "image": "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=800&q=80",
+      "adopted": false
+    },
+    {
+      "id": "3",
+      "name": "Bob",
+      "age": "Idoso",
+      "size": "Pequeno",
+      "personality": "Calmo",
+      "city": "Curitiba",
+      "description": "Bob é um cãozinho tranquilo e carinhoso, ideal para quem busca uma companhia serena.",
+      "story": "Bob passou a maior parte da vida nas ruas, mas nunca perdeu a doçura. Ele é perfeito para quem quer um companheiro calmo e que não exige muita atividade física. Adora cochilos no sofá e carinhos.",
+      "image": "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=800&q=80",
+      "adopted": false
+    },
+    {
+      "id": "4",
+      "name": "Mel",
+      "age": "Adulto",
+      "size": "Médio",
+      "personality": "Carinhoso",
+      "city": "Florianópolis",
+      "description": "Mel é doce como o nome sugere, sempre pronta para dar e receber carinho.",
+      "story": "Mel foi abandonada grávida e deu à luz em um abrigo. Seus filhotes já foram adotados, e agora é a vez dela encontrar uma família. Ela é gentil, obediente e se dá bem com crianças e outros animais.",
+      "image": "https://images.unsplash.com/photo-1561037404-61cd46aa615b?w=800&q=80",
+      "adopted": false
+    },
+    {
+      "id": "5",
+      "name": "Max",
+      "age": "Filhote",
+      "size": "Grande",
+      "personality": "Energético",
+      "city": "Belo Horizonte",
+      "description": "Max é pura energia! Perfeito para famílias ativas que adoram aventuras.",
+      "story": "Max foi encontrado em uma estrada, sozinho e com fome. Apesar do início difícil, ele é incrivelmente otimista e cheio de vida. Precisa de exercícios diários e muito espaço para correr.",
+      "image": "https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?w=800&q=80",
+      "adopted": false
+    },
+    {
+      "id": "6",
+      "name": "Nina",
+      "age": "Adulto",
+      "size": "Pequeno",
+      "personality": "Sociável",
+      "city": "Rio de Janeiro",
+      "description": "Nina adora conhecer pessoas e outros cães. É impossível não se apaixonar por ela!",
+      "story": "Nina foi resgatada de um lar com muitos animais em situação precária. Ela é extremamente social e se adapta facilmente a novos ambientes. Adora passear no parque e fazer amizades.",
+      "image": "https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?w=800&q=80",
+      "adopted": false
+    },
+    {
+      "id": "7",
+      "name": "Buddy",
+      "age": "Adulto",
+      "size": "Grande",
+      "personality": "Independente",
+      "city": "Brasília",
+      "description": "Buddy é independente mas leal. Perfeito para quem busca um companheiro tranquilo.",
+      "story": "Buddy viveu nas ruas por anos e aprendeu a ser autossuficiente. Ele é calmo, limpo e não dá trabalho. Apesar de independente, ele cria laços fortes com seus humanos e é extremamente leal.",
+      "image": "https://images.unsplash.com/photo-1558788353-f76d92427f16?w=800&q=80",
+      "adopted": false
+    },
+    {
+      "id": "8",
+      "name": "Princesa",
+      "age": "Idoso",
+      "size": "Médio",
+      "personality": "Tímido",
+      "city": "Salvador",
+      "description": "Princesa é tímida no início, mas quando se abre, é puro amor.",
+      "story": "Princesa foi maltratada no passado e por isso é um pouco desconfiada. Com paciência e carinho, ela se transforma em uma companheira incrível. Ideal para lares calmos e sem muito movimento.",
+      "image": "https://images.unsplash.com/photo-1477884213360-7e9d7dcc1e48?w=800&q=80",
+      "adopted": false
+    }
+  ],
+  "happyStories": [
+    {
+      "id": "1",
+      "dogName": "Rex",
+      "adopterName": "Família Silva",
+      "story": "Rex chegou ao abrigo machucado e assustado. Hoje ele tem um jardim enorme para brincar e é o melhor amigo do nosso filho de 8 anos. Não conseguimos imaginar nossa vida sem ele!",
+      "beforeImage": "https://images.unsplash.com/photo-1548681528-6a5c45b66b42?w=800&q=80",
+      "afterImage": "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=800&q=80",
+      "date": "2024-01-15"
+    },
+    {
+      "id": "2",
+      "dogName": "Bella",
+      "adopterName": "Maria Santos",
+      "story": "Bella era muito tímida quando a conheci. Com amor e paciência, ela se transformou na cadela mais carinhosa do mundo. Ela me acompanha em tudo e trouxe tanta alegria para minha vida!",
+      "beforeImage": "https://images.unsplash.com/photo-1504595403659-9088ce801e29?w=800&q=80",
+      "afterImage": "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=800&q=80",
+      "date": "2024-02-20"
+    },
+    {
+      "id": "3",
+      "dogName": "Duke",
+      "adopterName": "Pedro Oliveira",
+      "story": "Duke era considerado 'difícil' no abrigo por ser muito energético. Acontece que ele só precisava de uma família ativa como a nossa! Agora ele faz trilhas conosco todo fim de semana.",
+      "beforeImage": "https://images.unsplash.com/photo-1576201836106-db1758fd1c97?w=800&q=80",
+      "afterImage": "https://images.unsplash.com/photo-1529472119196-cb724127a98e?w=800&q=80",
+      "date": "2024-03-10"
+    }
+  ]
+}
