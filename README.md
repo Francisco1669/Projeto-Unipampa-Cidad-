@@ -13,7 +13,10 @@ Uma plataforma minimalista e acolhedora para adoção de cães abandonados, cons
 - **Página individual do cão**: Detalhes completos com foto, história e personalidade
 - **Formulário de adoção**: Processo simples e amigável para manifestar interesse
 - **Histórias Felizes**: Galeria inspiradora de adoções bem-sucedidas (antes e depois)
-- **Painel Admin**: CRUD completo para gerenciar os cães cadastrados
+- **Painel Admin**: CRUD completo com persistência real em MongoDB
+- **Persistência de Dados**: MongoDB com Mongoose para armazenamento
+- **API REST**: Endpoints completos para gerenciamento de dados
+- **Ícones**: Lucide React para interface limpa sem emojis
 
 ## 🎨 Design
 
@@ -34,17 +37,22 @@ Uma plataforma minimalista e acolhedora para adoção de cães abandonados, cons
 
 ## 🚀 Tecnologias
 
-- **Next.js 15**: Framework React com App Router
+- **Next.js 15**: Framework React com App Router e Server Components
 - **React 19**: Biblioteca para interfaces
-- **TypeScript**: Tipagem estática
+- **TypeScript**: Tipagem estática forte
 - **TailwindCSS**: Estilização utilitária
-- **JSON**: Mock de dados (fácil migração para banco real)
+- **MongoDB**: Banco de dados NoSQL
+- **Mongoose**: ODM para MongoDB com schemas e validação
+- **Lucide React**: Biblioteca de ícones moderna e limpa
 
 ## 📁 Estrutura do Projeto
 
 ```
 amigo-4-patas/
 ├── app/
+│   ├── api/                # API Routes
+│   │   ├── dogs/           # CRUD de cães
+│   │   └── happy-stories/  # Histórias felizes
 │   ├── admin/              # Painel administrativo
 │   ├── adotar/[id]/        # Formulário de adoção
 │   ├── dog/[id]/           # Página individual do cão
@@ -56,14 +64,22 @@ amigo-4-patas/
 ├── components/
 │   ├── DogCard.tsx         # Card de cão
 │   ├── DogFilters.tsx      # Filtros de busca
+│   ├── DogGrid.tsx         # Grid com filtros client-side
 │   └── Header.tsx          # Cabeçalho
 ├── data/
-│   └── dogs.json           # Dados mock dos cães
+│   └── dogs.json           # Dados para seed inicial
 ├── lib/
-│   └── dogs.ts             # Funções auxiliares
+│   ├── dogs.ts             # Funções auxiliares (legado)
+│   └── mongodb/
+│       └── connection.ts   # Conexão MongoDB
+├── models/
+│   ├── Dog.ts              # Schema Mongoose do Dog
+│   └── HappyStory.ts       # Schema Mongoose do HappyStory
+├── scripts/
+│   └── seed.ts             # Script para popular banco
 ├── types/
 │   └── dog.ts              # Tipos TypeScript
-├── public/                 # Arquivos estáticos
+├── .env.example            # Exemplo de variáveis de ambiente
 ├── next.config.ts          # Configuração Next.js
 ├── tailwind.config.ts      # Configuração Tailwind
 ├── tsconfig.json           # Configuração TypeScript
@@ -74,6 +90,7 @@ amigo-4-patas/
 
 ### Pré-requisitos
 - Node.js 18+ instalado
+- MongoDB instalado localmente OU MongoDB Atlas (cloud)
 - npm ou yarn
 
 ### Passo a passo
@@ -89,12 +106,36 @@ cd Projeto-Unipampa-Cidad-
 npm install
 ```
 
-3. **Execute o projeto em modo desenvolvimento**
+3. **Configure as variáveis de ambiente**
+```bash
+# Copie o arquivo de exemplo
+cp .env.example .env.local
+
+# Edite .env.local e configure a URL do MongoDB:
+# Para MongoDB local:
+MONGODB_URI=mongodb://localhost:27017/amigo-4-patas
+
+# Para MongoDB Atlas (cloud):
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/amigo-4-patas
+```
+
+4. **Popular o banco de dados (primeira vez)**
+```bash
+npm run seed
+```
+
+Este comando irá:
+- Conectar ao MongoDB
+- Limpar dados existentes
+- Inserir 8 cães de exemplo
+- Inserir 3 histórias felizes
+
+5. **Execute o projeto em modo desenvolvimento**
 ```bash
 npm run dev
 ```
 
-4. **Acesse no navegador**
+6. **Acesse no navegador**
 ```
 http://localhost:3000
 ```
@@ -106,6 +147,7 @@ npm run dev      # Inicia servidor de desenvolvimento
 npm run build    # Cria build de produção
 npm run start    # Inicia servidor de produção
 npm run lint     # Executa linter
+npm run seed     # Popular banco de dados com dados iniciais
 ```
 
 ## 📱 Páginas
@@ -136,64 +178,125 @@ npm run lint     # Executa linter
 - CTA para ver cães disponíveis
 
 ### 5. Painel Admin (`/admin`)
-- Lista todos os cães cadastrados
+- Lista todos os cães cadastrados (com persistência MongoDB)
 - Adicionar novo cão
 - Editar informações
-- Excluir cão
+- Excluir cão permanentemente
 - Alternar status (disponível/adotado)
+- Loading states e feedback visual
+- Todas as alterações persistem no banco de dados
 
-**Nota**: As alterações no Admin são apenas em memória (não persistem após recarregar a página). Para persistência real, integre com um banco de dados.
+## 🔌 API REST
 
-## 🗂️ Dados Mock
+A aplicação possui uma API REST completa para gerenciamento de dados:
 
-Os dados dos cães estão em `data/dogs.json`. A estrutura é:
+### Cães (Dogs)
 
-```json
+**GET /api/dogs**
+- Lista todos os cães
+- Query params: `size`, `age`, `city`, `search`, `adopted`
+- Exemplo: `/api/dogs?size=Grande&city=São Paulo`
+
+**GET /api/dogs/[id]**
+- Busca um cão específico por ID
+
+**POST /api/dogs**
+- Cria um novo cão
+- Body: objeto Dog completo
+- Validação automática via Mongoose
+
+**PUT /api/dogs/[id]**
+- Atualiza um cão existente
+- Body: campos a serem atualizados
+
+**DELETE /api/dogs/[id]**
+- Deleta um cão permanentemente
+
+### Histórias Felizes
+
+**GET /api/happy-stories**
+- Lista todas as histórias felizes
+- Ordenadas por data (mais recentes primeiro)
+
+**POST /api/happy-stories**
+- Cria uma nova história feliz
+- Body: objeto HappyStory completo
+
+## 🗂️ Banco de Dados
+
+### Schemas Mongoose
+
+**Dog (Cão)**
+```typescript
 {
-  "dogs": [
-    {
-      "id": "1",
-      "name": "Nome do Cão",
-      "age": "Adulto",
-      "size": "Grande",
-      "personality": "Carinhoso",
-      "city": "Cidade",
-      "description": "Descrição curta",
-      "story": "História completa",
-      "image": "URL da imagem",
-      "adopted": false
-    }
-  ],
-  "happyStories": [...]
+  name: String (required, 2-50 chars)
+  age: 'Filhote' | 'Adulto' | 'Idoso' (required)
+  size: 'Pequeno' | 'Médio' | 'Grande' (required)
+  personality: String (required, enum de 8 opções)
+  city: String (required)
+  description: String (required, 10-500 chars)
+  story: String (required, 20-2000 chars)
+  image: String (required, URL válida)
+  adopted: Boolean (default: false)
+  timestamps: true (createdAt, updatedAt)
 }
 ```
 
-## 🎯 Próximos Passos
+**HappyStory (História Feliz)**
+```typescript
+{
+  dogName: String (required)
+  adopterName: String (required)
+  story: String (required, 20-2000 chars)
+  beforeImage: String (required, URL válida)
+  afterImage: String (required, URL válida)
+  date: String (required)
+  timestamps: true
+}
+```
 
-Para tornar este projeto completo em produção:
+### Dados de Seed
 
-1. **Backend real**
-   - Integrar com Supabase, Firebase ou outro backend
-   - API Routes do Next.js para operações CRUD
-   - Autenticação no painel Admin
+Os dados iniciais estão em `data/dogs.json`:
+- 8 cães de exemplo
+- 3 histórias felizes
+- Use `npm run seed` para popular o banco
+
+## 🎯 Melhorias Futuras
+
+Próximos passos para levar o projeto a produção:
+
+1. **Autenticação**
+   - Proteger painel Admin com autenticação
+   - NextAuth.js ou Clerk
+   - Diferentes níveis de permissão
 
 2. **Upload de imagens**
    - Integrar com Cloudinary, AWS S3 ou similar
-   - Upload direto pelo Admin
+   - Upload direto pelo Admin (sem precisar de URLs)
+   - Redimensionamento automático
 
 3. **E-mails**
    - Enviar e-mail de confirmação após adoção
    - Notificar administradores sobre novos interessados
+   - Templates personalizados
 
 4. **Melhorias de UX**
-   - Animações mais elaboradas
-   - Loading states
    - Toast notifications
+   - Confirmações modais mais bonitas
+   - Skeleton loading
+   - Paginação na lista de cães
 
 5. **SEO e Performance**
-   - Meta tags dinâmicas
-   - Otimização de imagens
-   - Sitemap e robots.txt
+   - Meta tags dinâmicas por página
+   - Otimização de imagens (next/image já ajuda)
+   - Sitemap dinâmico
+   - Cache avançado
+
+6. **Deploy**
+   - Vercel (Next.js)
+   - MongoDB Atlas (banco de dados)
+   - Configurar domínio customizado
 
 ## 🤝 Contribuindo
 

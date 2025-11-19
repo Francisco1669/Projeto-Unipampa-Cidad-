@@ -1,12 +1,14 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
-import { getAllDogs } from '@/lib/dogs'
-import { Dog } from '@/types/dog'
+import { Loader2, Plus, X } from 'lucide-react'
+import type { Dog } from '@/types/dog'
 
 export default function AdminPage() {
-  const [dogs, setDogs] = useState<Dog[]>(getAllDogs())
+  const [dogs, setDogs] = useState<Dog[]>([])
+  const [loading, setLoading] = useState(true)
+  const [submitting, setSubmitting] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [currentDog, setCurrentDog] = useState<Dog | null>(null)
   const [showForm, setShowForm] = useState(false)
@@ -23,6 +25,27 @@ export default function AdminPage() {
     adopted: false,
   })
 
+  // Buscar cães ao carregar a página
+  useEffect(() => {
+    fetchDogs()
+  }, [])
+
+  async function fetchDogs() {
+    try {
+      setLoading(true)
+      const res = await fetch('/api/dogs')
+      if (res.ok) {
+        const data = await res.json()
+        setDogs(data)
+      }
+    } catch (error) {
+      console.error('Erro ao buscar cães:', error)
+      alert('Erro ao carregar dados')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const handleEdit = (dog: Dog) => {
     setCurrentDog(dog)
     setFormData(dog)
@@ -30,41 +53,96 @@ export default function AdminPage() {
     setShowForm(true)
   }
 
-  const handleDelete = (id: string) => {
-    if (confirm('Tem certeza que deseja excluir este cão?')) {
-      setDogs(dogs.filter((dog) => dog.id !== id))
-      alert('Cão excluído com sucesso! (Nota: isso não persiste após recarregar a página)')
+  const handleDelete = async (id: string) => {
+    if (!confirm('Tem certeza que deseja excluir este cão?')) return
+
+    try {
+      const res = await fetch(`/api/dogs/${id}`, {
+        method: 'DELETE',
+      })
+
+      if (res.ok) {
+        setDogs(dogs.filter((dog) => dog.id !== id))
+        alert('Cão excluído com sucesso!')
+      } else {
+        const error = await res.json()
+        alert(`Erro ao excluir: ${error.error}`)
+      }
+    } catch (error) {
+      console.error('Erro ao excluir cão:', error)
+      alert('Erro ao excluir cão')
     }
   }
 
-  const handleToggleAdopted = (id: string) => {
-    setDogs(
-      dogs.map((dog) =>
-        dog.id === id ? { ...dog, adopted: !dog.adopted } : dog
-      )
-    )
+  const handleToggleAdopted = async (id: string) => {
+    const dog = dogs.find((d) => d.id === id)
+    if (!dog) return
+
+    try {
+      const res = await fetch(`/api/dogs/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ adopted: !dog.adopted }),
+      })
+
+      if (res.ok) {
+        const updatedDog = await res.json()
+        setDogs(dogs.map((d) => (d.id === id ? updatedDog : d)))
+      } else {
+        alert('Erro ao atualizar status')
+      }
+    } catch (error) {
+      console.error('Erro ao atualizar:', error)
+      alert('Erro ao atualizar status')
+    }
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setSubmitting(true)
 
-    if (isEditing && currentDog) {
-      setDogs(
-        dogs.map((dog) =>
-          dog.id === currentDog.id ? { ...dog, ...formData } : dog
-        )
-      )
-      alert('Cão atualizado com sucesso! (Nota: isso não persiste após recarregar a página)')
-    } else {
-      const newDog: Dog = {
-        ...formData,
-        id: String(Date.now()),
-      } as Dog
-      setDogs([...dogs, newDog])
-      alert('Cão adicionado com sucesso! (Nota: isso não persiste após recarregar a página)')
+    try {
+      if (isEditing && currentDog) {
+        // Atualizar cão existente
+        const res = await fetch(`/api/dogs/${currentDog.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData),
+        })
+
+        if (res.ok) {
+          const updatedDog = await res.json()
+          setDogs(dogs.map((dog) => (dog.id === currentDog.id ? updatedDog : dog)))
+          alert('Cão atualizado com sucesso!')
+          resetForm()
+        } else {
+          const error = await res.json()
+          alert(`Erro: ${error.error}`)
+        }
+      } else {
+        // Criar novo cão
+        const res = await fetch('/api/dogs', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData),
+        })
+
+        if (res.ok) {
+          const newDog = await res.json()
+          setDogs([newDog, ...dogs])
+          alert('Cão adicionado com sucesso!')
+          resetForm()
+        } else {
+          const error = await res.json()
+          alert(`Erro: ${error.error}`)
+        }
+      }
+    } catch (error) {
+      console.error('Erro ao salvar:', error)
+      alert('Erro ao salvar dados')
+    } finally {
+      setSubmitting(false)
     }
-
-    resetForm()
   }
 
   const resetForm = () => {
@@ -96,6 +174,16 @@ export default function AdminPage() {
     }))
   }
 
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-12">
+        <div className="flex justify-center items-center min-h-[400px]">
+          <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="container mx-auto px-4 py-12">
       <div className="max-w-6xl mx-auto">
@@ -103,9 +191,19 @@ export default function AdminPage() {
           <h1 className="text-4xl font-bold">Painel Admin</h1>
           <button
             onClick={() => setShowForm(!showForm)}
-            className="bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-800 transition-colors font-medium"
+            className="bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-800 transition-colors font-medium inline-flex items-center gap-2"
           >
-            {showForm ? 'Cancelar' : '+ Adicionar Cão'}
+            {showForm ? (
+              <>
+                <X className="w-5 h-5" />
+                Cancelar
+              </>
+            ) : (
+              <>
+                <Plus className="w-5 h-5" />
+                Adicionar Cão
+              </>
+            )}
           </button>
         </div>
 
@@ -246,8 +344,10 @@ export default function AdminPage() {
               <div className="flex gap-4">
                 <button
                   type="submit"
-                  className="bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-800 transition-colors font-medium"
+                  disabled={submitting}
+                  className="bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-800 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-2"
                 >
+                  {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
                   {isEditing ? 'Salvar Alterações' : 'Adicionar Cão'}
                 </button>
                 <button
@@ -277,62 +377,69 @@ export default function AdminPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {dogs.map((dog) => (
-                  <tr key={dog.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-4">
-                      <div className="relative w-12 h-12 rounded overflow-hidden">
-                        <Image
-                          src={dog.image}
-                          alt={dog.name}
-                          fill
-                          className="object-cover"
-                          sizes="48px"
-                        />
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 font-medium">{dog.name}</td>
-                    <td className="px-6 py-4 text-gray-600">{dog.city}</td>
-                    <td className="px-6 py-4 text-gray-600">{dog.age}</td>
-                    <td className="px-6 py-4 text-gray-600">{dog.size}</td>
-                    <td className="px-6 py-4">
-                      <button
-                        onClick={() => handleToggleAdopted(dog.id)}
-                        className={`text-xs px-3 py-1 rounded font-medium ${
-                          dog.adopted
-                            ? 'bg-gray-200 text-gray-700'
-                            : 'bg-green-100 text-green-700'
-                        }`}
-                      >
-                        {dog.adopted ? 'Adotado' : 'Disponível'}
-                      </button>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => handleEdit(dog)}
-                          className="text-sm text-black hover:underline"
-                        >
-                          Editar
-                        </button>
-                        <button
-                          onClick={() => handleDelete(dog.id)}
-                          className="text-sm text-red-600 hover:underline"
-                        >
-                          Excluir
-                        </button>
-                      </div>
+                {dogs.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} className="px-6 py-12 text-center text-gray-500">
+                      Nenhum cão cadastrado
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  dogs.map((dog) => (
+                    <tr key={dog.id} className="hover:bg-gray-50 transition-colors">
+                      <td className="px-6 py-4">
+                        <div className="relative w-12 h-12 rounded overflow-hidden">
+                          <Image
+                            src={dog.image}
+                            alt={dog.name}
+                            fill
+                            className="object-cover"
+                            sizes="48px"
+                          />
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 font-medium">{dog.name}</td>
+                      <td className="px-6 py-4 text-gray-600">{dog.city}</td>
+                      <td className="px-6 py-4 text-gray-600">{dog.age}</td>
+                      <td className="px-6 py-4 text-gray-600">{dog.size}</td>
+                      <td className="px-6 py-4">
+                        <button
+                          onClick={() => handleToggleAdopted(dog.id)}
+                          className={`text-xs px-3 py-1 rounded font-medium ${
+                            dog.adopted
+                              ? 'bg-gray-200 text-gray-700'
+                              : 'bg-green-100 text-green-700'
+                          }`}
+                        >
+                          {dog.adopted ? 'Adotado' : 'Disponível'}
+                        </button>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => handleEdit(dog)}
+                            className="text-sm text-black hover:underline"
+                          >
+                            Editar
+                          </button>
+                          <button
+                            onClick={() => handleDelete(dog.id)}
+                            className="text-sm text-red-600 hover:underline"
+                          >
+                            Excluir
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
         </div>
 
-        <div className="mt-6 bg-yellow-50 border border-yellow-100 rounded-lg p-4">
-          <p className="text-sm text-yellow-800">
-            <strong>Nota:</strong> Esta é uma versão de demonstração. As alterações não são persistidas
-            e serão perdidas ao recarregar a página. Para persistência real, integre com um banco de dados.
+        <div className="mt-6 bg-green-50 border border-green-100 rounded-lg p-4">
+          <p className="text-sm text-green-800">
+            <strong>Persistência ativada!</strong> Todas as alterações são salvas no MongoDB e persistem após recarregar a página.
           </p>
         </div>
       </div>

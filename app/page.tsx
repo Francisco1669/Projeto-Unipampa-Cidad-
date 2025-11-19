@@ -1,24 +1,25 @@
-'use client'
+import DogGrid from '@/components/DogGrid'
+import connectDB from '@/lib/mongodb/connection'
+import Dog from '@/models/Dog'
 
-import { useState, useMemo } from 'react'
-import DogCard from '@/components/DogCard'
-import DogFilters from '@/components/DogFilters'
-import { getAllDogs, filterDogs, getCities } from '@/lib/dogs'
+export const revalidate = 60 // Revalidar a cada 60 segundos
 
-export default function Home() {
-  const allDogs = getAllDogs()
-  const cities = getCities()
+export default async function Home() {
+  await connectDB()
 
-  const [filters, setFilters] = useState({
-    size: 'all',
-    age: 'all',
-    city: 'all',
-    search: '',
-  })
+  const dogs = await Dog.find({ adopted: false })
+    .sort({ createdAt: -1 })
+    .lean()
 
-  const filteredDogs = useMemo(() => {
-    return filterDogs(allDogs, filters)
-  }, [allDogs, filters])
+  const dogsFormatted = dogs.map((dog) => ({
+    ...dog,
+    _id: dog._id.toString(),
+    id: dog._id.toString(),
+    __v: undefined,
+  }))
+
+  // Extrair cidades únicas
+  const cities = Array.from(new Set(dogsFormatted.map((dog) => dog.city))).sort()
 
   return (
     <div className="container mx-auto px-4 py-12">
@@ -31,26 +32,7 @@ export default function Home() {
         </p>
       </div>
 
-      <DogFilters cities={cities} onFilterChange={setFilters} />
-
-      {filteredDogs.length === 0 ? (
-        <div className="text-center py-16">
-          <p className="text-gray-500 text-lg">
-            Nenhum cão encontrado com esses filtros. Tente ajustar sua busca!
-          </p>
-        </div>
-      ) : (
-        <>
-          <p className="text-gray-600 mb-6">
-            {filteredDogs.length} {filteredDogs.length === 1 ? 'cão encontrado' : 'cães encontrados'}
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredDogs.map((dog) => (
-              <DogCard key={dog.id} dog={dog} />
-            ))}
-          </div>
-        </>
-      )}
+      <DogGrid initialDogs={dogsFormatted} cities={cities} />
     </div>
   )
 }

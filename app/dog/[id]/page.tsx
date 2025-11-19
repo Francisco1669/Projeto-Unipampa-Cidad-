@@ -1,12 +1,19 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { getDogById, getAllDogs } from '@/lib/dogs'
+import { ChevronLeft } from 'lucide-react'
+import connectDB from '@/lib/mongodb/connection'
+import Dog from '@/models/Dog'
+import mongoose from 'mongoose'
 
-export function generateStaticParams() {
-  const dogs = getAllDogs()
+export const revalidate = 60
+
+export async function generateStaticParams() {
+  await connectDB()
+  const dogs = await Dog.find({}).select('_id').lean()
+
   return dogs.map((dog) => ({
-    id: dog.id,
+    id: dog._id.toString(),
   }))
 }
 
@@ -16,10 +23,24 @@ export default async function DogPage({
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
-  const dog = getDogById(id)
 
-  if (!dog) {
+  // Validar se é um ObjectId válido
+  if (!mongoose.Types.ObjectId.isValid(id)) {
     notFound()
+  }
+
+  await connectDB()
+  const dogData = await Dog.findById(id).lean()
+
+  if (!dogData) {
+    notFound()
+  }
+
+  const dog = {
+    ...dogData,
+    id: dogData._id.toString(),
+    _id: undefined,
+    __v: undefined,
   }
 
   return (
@@ -28,19 +49,7 @@ export default async function DogPage({
         href="/"
         className="inline-flex items-center text-gray-600 hover:text-black transition-colors mb-8"
       >
-        <svg
-          className="w-5 h-5 mr-2"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M15 19l-7-7 7-7"
-          />
-        </svg>
+        <ChevronLeft className="w-5 h-5 mr-2" />
         Voltar para todos os cães
       </Link>
 

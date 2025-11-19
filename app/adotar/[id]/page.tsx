@@ -1,10 +1,11 @@
 'use client'
 
-import { useState, use } from 'react'
+import { useState, use, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { getDogById } from '@/lib/dogs'
+import { ChevronLeft, Heart, Loader2 } from 'lucide-react'
+import type { Dog } from '@/types/dog'
 
 export default function AdoptionPage({
   params
@@ -13,7 +14,8 @@ export default function AdoptionPage({
 }) {
   const { id } = use(params)
   const router = useRouter()
-  const dog = getDogById(id)
+  const [dog, setDog] = useState<Dog | null>(null)
+  const [loading, setLoading] = useState(true)
   const [submitted, setSubmitted] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
@@ -26,24 +28,31 @@ export default function AdoptionPage({
     whyAdopt: '',
   })
 
-  if (!dog) {
-    return (
-      <div className="container mx-auto px-4 py-12 text-center">
-        <p className="text-gray-600">Cão não encontrado</p>
-        <Link href="/" className="text-black underline mt-4 inline-block">
-          Voltar para Home
-        </Link>
-      </div>
-    )
-  }
+  useEffect(() => {
+    async function fetchDog() {
+      try {
+        const res = await fetch(`/api/dogs/${id}`)
+        if (res.ok) {
+          const data = await res.json()
+          setDog(data)
+        } else {
+          setDog(null)
+        }
+      } catch (error) {
+        console.error('Erro ao buscar cão:', error)
+        setDog(null)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchDog()
+  }, [id])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    // Aqui você pode adicionar lógica para enviar para um backend
     console.log('Formulário enviado:', formData)
     setSubmitted(true)
 
-    // Redirecionar após 3 segundos
     setTimeout(() => {
       router.push('/')
     }, 3000)
@@ -56,12 +65,37 @@ export default function AdoptionPage({
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-12">
+        <div className="flex justify-center items-center min-h-[400px]">
+          <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+        </div>
+      </div>
+    )
+  }
+
+  if (!dog) {
+    return (
+      <div className="container mx-auto px-4 py-12 text-center">
+        <p className="text-gray-600">Cão não encontrado</p>
+        <Link href="/" className="text-black underline mt-4 inline-block">
+          Voltar para Home
+        </Link>
+      </div>
+    )
+  }
+
   if (submitted) {
     return (
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-2xl mx-auto text-center">
           <div className="mb-8">
-            <div className="text-6xl mb-4">🐾</div>
+            <div className="flex justify-center mb-4">
+              <div className="w-20 h-20 bg-black rounded-full flex items-center justify-center">
+                <Heart className="w-10 h-10 text-white fill-white" />
+              </div>
+            </div>
             <h1 className="text-4xl font-bold mb-4">Uau! Que notícia incrível!</h1>
             <p className="text-xl text-gray-700">
               Seu interesse em adotar <strong>{dog.name}</strong> foi enviado com sucesso!
@@ -71,7 +105,7 @@ export default function AdoptionPage({
           <div className="bg-gray-50 border border-gray-100 rounded-lg p-6 mb-6">
             <p className="text-gray-700">
               Em breve nossa equipe entrará em contato para dar continuidade ao processo de adoção.
-              Prepare-se para receber muito amor! ❤️
+              Prepare-se para receber muito amor!
             </p>
           </div>
 
@@ -89,19 +123,7 @@ export default function AdoptionPage({
         href={`/dog/${dog.id}`}
         className="inline-flex items-center text-gray-600 hover:text-black transition-colors mb-8"
       >
-        <svg
-          className="w-5 h-5 mr-2"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M15 19l-7-7 7-7"
-          />
-        </svg>
+        <ChevronLeft className="w-5 h-5 mr-2" />
         Voltar
       </Link>
 

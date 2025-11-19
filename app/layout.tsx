@@ -22,7 +22,7 @@ export default function RootLayout({
         <footer className="border-t border-gray-100 py-8 mt-16">
           <div className="container mx-auto px-4 text-center text-gray-500 text-sm">
             <p>© 2025 Amigo de 4 Patas - Todos os direitos reservados</p>
-            <p className="mt-2">Feito com ❤️ para ajudar cães a encontrarem um lar</p>
+            <p className="mt-2">Feito com carinho para ajudar cães a encontrarem um lar</p>
           </div>
         </footer>
       </body>

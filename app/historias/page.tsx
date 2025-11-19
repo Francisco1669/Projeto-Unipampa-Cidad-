@@ -1,9 +1,23 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { getHappyStories } from '@/lib/dogs'
+import connectDB from '@/lib/mongodb/connection'
+import HappyStory from '@/models/HappyStory'
 
-export default function HappyStoriesPage() {
-  const stories = getHappyStories()
+export const revalidate = 60
+
+export default async function HappyStoriesPage() {
+  await connectDB()
+
+  const storiesData = await HappyStory.find({})
+    .sort({ date: -1 })
+    .lean()
+
+  const stories = storiesData.map((story) => ({
+    ...story,
+    id: story._id.toString(),
+    _id: undefined,
+    __v: undefined,
+  }))
 
   return (
     <div className="container mx-auto px-4 py-12">
@@ -17,7 +31,7 @@ export default function HappyStoriesPage() {
       </div>
 
       <div className="max-w-5xl mx-auto space-y-12">
-        {stories.map((story, index) => (
+        {stories.map((story) => (
           <div
             key={story.id}
             className="bg-gray-50 border border-gray-100 rounded-lg overflow-hidden"
