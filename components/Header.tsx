@@ -2,9 +2,11 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useSession } from 'next-auth/react'
 
 export default function Header() {
   const pathname = usePathname()
+  const { data: session } = useSession()
 
   const isActive = (path: string) => {
     return pathname === path ? 'text-black' : 'text-gray-500 hover:text-black'
@@ -30,9 +32,15 @@ export default function Header() {
               </Link>
             </li>
             <li>
-              <Link href="/admin" className={`transition-colors ${isActive('/admin')}`}>
-                Admin
-              </Link>
+              {session?.user ? (
+                <Link href="/admin" className={`transition-colors ${isActive('/admin')}`}>
+                  Admin
+                </Link>
+              ) : (
+                <Link href="/login" className={`transition-colors ${isActive('/login')}`}>
+                  Login
+                </Link>
+              )}
             </li>
           </ul>
         </nav>

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import { Loader2, Plus, X } from 'lucide-react'
 import type { Dog } from '@/types/dog'
@@ -12,6 +12,8 @@ export default function AdminPage() {
   const [isEditing, setIsEditing] = useState(false)
   const [currentDog, setCurrentDog] = useState<Dog | null>(null)
   const [showForm, setShowForm] = useState(false)
+  const [uploadingImage, setUploadingImage] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement | null>(null)
 
   const [formData, setFormData] = useState<Partial<Dog>>({
     name: '',
@@ -97,17 +99,68 @@ export default function AdminPage() {
     }
   }
 
+  const uploadFileAndGetUrl = async (file: File): Promise<string | null> => {
+    try {
+      setUploadingImage(true)
+      const data = new FormData()
+      data.append('file', file)
+
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: data,
+      })
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}))
+        alert(err.error || 'Erro ao enviar imagem')
+        return null
+      }
+
+      const json = await res.json()
+      return json.url as string
+    } catch (error) {
+      console.error('Erro ao enviar imagem:', error)
+      alert('Erro ao enviar imagem')
+      return null
+    } finally {
+      setUploadingImage(false)
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setSubmitting(true)
 
     try {
+      let imageUrl = formData.image || ''
+
+      const file = fileInputRef.current?.files?.[0]
+      if (file) {
+        const uploadedUrl = await uploadFileAndGetUrl(file)
+        if (!uploadedUrl) {
+          setSubmitting(false)
+          return
+        }
+        imageUrl = uploadedUrl
+      }
+
+      const payload = {
+        ...formData,
+        image: imageUrl,
+      }
+
+      if (!payload.image) {
+        alert('A imagem é obrigatória')
+        setSubmitting(false)
+        return
+      }
+
       if (isEditing && currentDog) {
         // Atualizar cão existente
         const res = await fetch(`/api/dogs/${currentDog.id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(formData),
+          body: JSON.stringify(payload),
         })
 
         if (res.ok) {
@@ -124,7 +177,7 @@ export default function AdminPage() {
         const res = await fetch('/api/dogs', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(formData),
+          body: JSON.stringify(payload),
         })
 
         if (res.ok) {
@@ -160,6 +213,9 @@ export default function AdminPage() {
     setIsEditing(false)
     setCurrentDog(null)
     setShowForm(false)
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
+    }
   }
 
   const handleChange = (
@@ -290,16 +346,38 @@ export default function AdminPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2">URL da Imagem *</label>
+                  <label className="block text-sm font-medium mb-2">
+                    Foto do cão *
+                  </label>
                   <input
-                    type="url"
-                    name="image"
-                    required
-                    value={formData.image}
-                    onChange={handleChange}
-                    placeholder="https://..."
-                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    name="imageFile"
+                    className="w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-black file:text-white hover:file:bg-gray-800"
                   />
+                  {formData.image && !fileInputRef.current?.files?.length && (
+                    <p className="mt-2 text-xs text-gray-500">
+                      Uma imagem já está cadastrada. Envie outra para substituir.
+                    </p>
+                  )}
+                  {uploadingImage && (
+                    <div className="mt-2 flex items-center text-xs text-gray-500 gap-2">
+                      <Loader2 className="w-3 h-3 animate-spin" />
+                      Enviando imagem...
+                    </div>
+                  )}
+                  {formData.image && (
+                    <div className="mt-3 relative w-24 h-24 rounded overflow-hidden border border-gray-200">
+                      <Image
+                        src={formData.image}
+                        alt="Preview"
+                        fill
+                        className="object-cover"
+                        sizes="96px"
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
 
