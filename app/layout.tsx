@@ -19,10 +19,43 @@ export default function RootLayout({
         <main className="min-h-screen">
           {children}
         </main>
-        <footer className="border-t border-gray-100 py-8 mt-16">
-          <div className="container mx-auto px-4 text-center text-gray-500 text-sm">
-            <p>© 2025 Amigo de 4 Patas - Todos os direitos reservados</p>
-            <p className="mt-2">Feito com carinho para ajudar cães a encontrarem um lar</p>
+        <footer className="border-t border-gray-100 bg-gray-50 mt-24">
+          <div className="container mx-auto px-4 py-16">
+            <div className="max-w-4xl mx-auto">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
+                <div>
+                  <h3 className="text-lg font-semibold mb-4">Nossa Missão</h3>
+                  <p className="text-gray-600 text-sm leading-relaxed">
+                    Conectar cães abandonados com famílias que querem dar amor. 
+                    Cada adoção é uma nova chance de felicidade.
+                  </p>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold mb-4">Como Funciona</h3>
+                  <p className="text-gray-600 text-sm leading-relaxed">
+                    Explore nossos cães disponíveis, conheça suas histórias e 
+                    preencha o formulário de interesse. Nossa equipe entrará em contato.
+                  </p>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold mb-4">Contato</h3>
+                  <p className="text-gray-600 text-sm leading-relaxed">
+                    Dúvidas ou sugestões? Entre em contato através do formulário 
+                    de adoção ou visite nossa página de histórias felizes.
+                  </p>
+                </div>
+              </div>
+              <div className="border-t border-gray-200 pt-8">
+                <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                  <p className="text-gray-500 text-sm">
+                    © 2025 Amigo de 4 Patas - Todos os direitos reservados
+                  </p>
+                  <p className="text-gray-500 text-sm italic">
+                    Feito com carinho para ajudar cães a encontrarem um lar
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </footer>
       </body>

@@ -22,17 +22,24 @@ export default async function Home() {
   const cities = Array.from(new Set(dogsFormatted.map((dog) => dog.city))).sort()
 
   return (
-    <div className="container mx-auto px-4 py-12">
-      <div className="max-w-3xl mx-auto text-center mb-12">
-        <h1 className="text-5xl font-bold mb-4 tracking-tight">
-          Encontre seu novo melhor amigo
-        </h1>
-        <p className="text-gray-600 text-lg">
-          Todos esses cães estão esperando por uma família. Dê uma chance para eles!
-        </p>
-      </div>
+    <div className="container mx-auto px-4">
+      {/* Hero Section */}
+      <section className="section-spacing">
+        <div className="max-w-4xl mx-auto text-center">
+          <h1 className="headline-hero mb-6 text-balance">
+            Encontre seu novo melhor amigo
+          </h1>
+          <p className="subtitle-hero max-w-2xl mx-auto text-balance">
+            Cada um desses cães tem uma história e está esperando por uma família. 
+            Dê uma chance para eles e descubra o amor incondicional que só um cão pode oferecer.
+          </p>
+        </div>
+      </section>
 
-      <DogGrid initialDogs={dogsFormatted} cities={cities} />
+      {/* Dogs Grid */}
+      <section className="pb-16">
+        <DogGrid initialDogs={dogsFormatted} cities={cities} />
+      </section>
     </div>
   )
 }

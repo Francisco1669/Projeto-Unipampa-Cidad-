@@ -90,22 +90,22 @@ export default function AdoptionPage({
     return (
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-2xl mx-auto text-center">
-          <div className="mb-8">
-            <div className="flex justify-center mb-4">
-              <div className="w-20 h-20 bg-black rounded-full flex items-center justify-center">
-                <Heart className="w-10 h-10 text-white fill-white" />
+          <div className="mb-12">
+            <div className="flex justify-center mb-6">
+              <div className="w-24 h-24 bg-accent-200 rounded-full flex items-center justify-center shadow-medium">
+                <Heart className="w-12 h-12 text-white fill-white" />
               </div>
             </div>
-            <h1 className="text-4xl font-bold mb-4">Uau! Que notícia incrível!</h1>
-            <p className="text-xl text-gray-700">
-              Seu interesse em adotar <strong>{dog.name}</strong> foi enviado com sucesso!
+            <h1 className="headline-section mb-4">Que notícia incrível!</h1>
+            <p className="text-xl text-gray-700 leading-relaxed mb-8">
+              Seu interesse em adotar <strong className="text-accent-500">{dog.name}</strong> foi enviado com sucesso!
             </p>
           </div>
 
-          <div className="bg-gray-50 border border-gray-100 rounded-lg p-6 mb-6">
-            <p className="text-gray-700">
+          <div className="bg-gray-50 border border-gray-100 rounded-lg p-8 mb-8 shadow-soft">
+            <p className="text-gray-700 leading-relaxed text-lg">
               Em breve nossa equipe entrará em contato para dar continuidade ao processo de adoção.
-              Prepare-se para receber muito amor!
+              Prepare-se para receber muito amor e carinho!
             </p>
           </div>
 
@@ -121,38 +121,42 @@ export default function AdoptionPage({
     <div className="container mx-auto px-4 py-12">
       <Link
         href={`/dog/${dog.id}`}
-        className="inline-flex items-center text-gray-600 hover:text-black transition-colors mb-8"
+        className="inline-flex items-center text-gray-600 hover:text-black transition-hover mb-12 group"
       >
-        <ChevronLeft className="w-5 h-5 mr-2" />
-        Voltar
+        <ChevronLeft className="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-hover" />
+        <span className="text-sm font-medium">Voltar</span>
       </Link>
 
       <div className="max-w-3xl mx-auto">
-        <div className="mb-8 flex items-center gap-6">
-          <div className="relative w-24 h-24 rounded-lg overflow-hidden flex-shrink-0">
+        <div className="mb-12 flex items-center gap-6 pb-8 border-b border-gray-100">
+          <div className="relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 shadow-soft">
             <Image
               src={dog.image}
               alt={dog.name}
               fill
               className="object-cover"
-              sizes="96px"
+              sizes="80px"
             />
           </div>
           <div>
-            <h1 className="text-3xl font-bold mb-1">Adotar {dog.name}</h1>
-            <p className="text-gray-600">
-              Preencha o formulário abaixo para iniciar o processo de adoção
+            <h1 className="headline-section mb-2">Adotar {dog.name}</h1>
+            <p className="text-gray-600 leading-relaxed">
+              Estamos felizes que você quer dar um lar para {dog.name}! 
+              Preencha o formulário abaixo para iniciar o processo de adoção.
             </p>
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="bg-gray-50 border border-gray-100 rounded-lg p-6">
-            <h2 className="text-xl font-bold mb-4">Seus dados</h2>
+        <form onSubmit={handleSubmit} className="space-y-8">
+          <div className="bg-white border border-gray-100 rounded-lg p-8 shadow-soft">
+            <h2 className="text-xl font-semibold mb-2">Seus dados</h2>
+            <p className="text-sm text-gray-600 mb-6">
+              Precisamos dessas informações para entrar em contato com você.
+            </p>
 
-            <div className="space-y-4">
+            <div className="space-y-5">
               <div>
-                <label htmlFor="name" className="block text-sm font-medium mb-2">
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
                   Nome completo *
                 </label>
                 <input
@@ -162,13 +166,14 @@ export default function AdoptionPage({
                   required
                   value={formData.name}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                  placeholder="Seu nome completo"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-lg focus-ring-subtle bg-white transition-hover hover:border-gray-300"
                 />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium mb-2">
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
                     E-mail *
                   </label>
                   <input
@@ -178,12 +183,13 @@ export default function AdoptionPage({
                     required
                     value={formData.email}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                    placeholder="seu@email.com"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus-ring-subtle bg-white transition-hover hover:border-gray-300"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="phone" className="block text-sm font-medium mb-2">
+                  <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
                     Telefone *
                   </label>
                   <input
@@ -193,13 +199,14 @@ export default function AdoptionPage({
                     required
                     value={formData.phone}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                    placeholder="(00) 00000-0000"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus-ring-subtle bg-white transition-hover hover:border-gray-300"
                   />
                 </div>
               </div>
 
               <div>
-                <label htmlFor="address" className="block text-sm font-medium mb-2">
+                <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-2">
                   Endereço completo *
                 </label>
                 <input
@@ -209,18 +216,22 @@ export default function AdoptionPage({
                   required
                   value={formData.address}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                  placeholder="Rua, número, bairro, cidade"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-lg focus-ring-subtle bg-white transition-hover hover:border-gray-300"
                 />
               </div>
             </div>
           </div>
 
-          <div className="bg-gray-50 border border-gray-100 rounded-lg p-6">
-            <h2 className="text-xl font-bold mb-4">Sobre sua casa</h2>
+          <div className="bg-white border border-gray-100 rounded-lg p-8 shadow-soft">
+            <h2 className="text-xl font-semibold mb-2">Sobre sua casa</h2>
+            <p className="text-sm text-gray-600 mb-6">
+              Conte um pouco sobre o ambiente onde {dog.name} vai viver.
+            </p>
 
-            <div className="space-y-4">
+            <div className="space-y-5">
               <div>
-                <label htmlFor="hasYard" className="block text-sm font-medium mb-2">
+                <label htmlFor="hasYard" className="block text-sm font-medium text-gray-700 mb-2">
                   Você tem quintal ou área externa? *
                 </label>
                 <select
@@ -229,7 +240,7 @@ export default function AdoptionPage({
                   required
                   value={formData.hasYard}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black appearance-none bg-white"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-lg focus-ring-subtle bg-white transition-hover hover:border-gray-300 appearance-none cursor-pointer"
                 >
                   <option value="yes">Sim</option>
                   <option value="no">Não</option>
@@ -237,7 +248,7 @@ export default function AdoptionPage({
               </div>
 
               <div>
-                <label htmlFor="hasPets" className="block text-sm font-medium mb-2">
+                <label htmlFor="hasPets" className="block text-sm font-medium text-gray-700 mb-2">
                   Você já tem outros pets em casa? *
                 </label>
                 <select
@@ -246,7 +257,7 @@ export default function AdoptionPage({
                   required
                   value={formData.hasPets}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black appearance-none bg-white"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-lg focus-ring-subtle bg-white transition-hover hover:border-gray-300 appearance-none cursor-pointer"
                 >
                   <option value="yes">Sim</option>
                   <option value="no">Não</option>
@@ -254,32 +265,34 @@ export default function AdoptionPage({
               </div>
 
               <div>
-                <label htmlFor="petExperience" className="block text-sm font-medium mb-2">
+                <label htmlFor="petExperience" className="block text-sm font-medium text-gray-700 mb-2">
                   Você já teve pets antes? Conte um pouco sobre sua experiência *
                 </label>
                 <textarea
                   id="petExperience"
                   name="petExperience"
                   required
-                  rows={3}
+                  rows={4}
                   value={formData.petExperience}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black resize-none"
+                  placeholder="Conte sobre suas experiências anteriores com animais..."
+                  className="w-full px-4 py-3 border border-gray-200 rounded-lg focus-ring-subtle bg-white transition-hover hover:border-gray-300 resize-none"
                 />
               </div>
 
               <div>
-                <label htmlFor="whyAdopt" className="block text-sm font-medium mb-2">
+                <label htmlFor="whyAdopt" className="block text-sm font-medium text-gray-700 mb-2">
                   Por que você quer adotar {dog.name}? *
                 </label>
                 <textarea
                   id="whyAdopt"
                   name="whyAdopt"
                   required
-                  rows={4}
+                  rows={5}
                   value={formData.whyAdopt}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black resize-none"
+                  placeholder="O que te chamou atenção em {dog.name}? O que você espera dessa adoção?"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-lg focus-ring-subtle bg-white transition-hover hover:border-gray-300 resize-none"
                 />
               </div>
             </div>
@@ -287,7 +300,7 @@ export default function AdoptionPage({
 
           <button
             type="submit"
-            className="w-full bg-black text-white py-4 px-8 rounded-lg font-medium hover:bg-gray-800 transition-colors"
+            className="w-full bg-accent-200 text-white py-4 px-8 rounded-lg font-semibold hover:bg-accent-300 transition-hover shadow-medium hover:shadow-large"
           >
             Enviar formulário de adoção
           </button>
