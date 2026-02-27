@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import Header from '@/components/Header'
+import { Providers } from './providers'
 
 export const metadata: Metadata = {
   title: 'Amigo de 4 Patas - Adoção de Cães',
@@ -15,10 +16,12 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body className="font-sans">
-        <Header />
-        <main className="min-h-screen">
-          {children}
-        </main>
+        <Providers>
+          <Header />
+          <main className="min-h-screen">
+            {children}
+          </main>
+        </Providers>
         <footer className="border-t border-gray-100 py-8 mt-16">
           <div className="container mx-auto px-4 text-center text-gray-500 text-sm">
             <p>© 2025 Amigo de 4 Patas - Todos os direitos reservados</p>
