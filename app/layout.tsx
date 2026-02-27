@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import Header from '@/components/Header'
+import { Providers } from './providers'
 
 export const metadata: Metadata = {
   title: 'Amigo de 4 Patas - Adoção de Cães',

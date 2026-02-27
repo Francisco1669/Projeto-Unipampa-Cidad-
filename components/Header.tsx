@@ -2,9 +2,11 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useSession } from 'next-auth/react'
 
 export default function Header() {
   const pathname = usePathname()
+  const { data: session } = useSession()
 
   const isActive = (path: string) => {
     return pathname === path
