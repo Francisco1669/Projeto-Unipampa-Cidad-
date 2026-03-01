@@ -10,40 +10,52 @@ export default function DogCard({ dog }: DogCardProps) {
   return (
     <Link
       href={`/dog/${dog.id}`}
-      className="group block bg-white border border-gray-100 rounded-lg overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+      className="group block bg-white border border-gray-100 rounded-lg overflow-hidden hover:shadow-card-hover transition-hover hover:-translate-y-1"
     >
       <div className="relative aspect-square overflow-hidden bg-gray-50">
         <Image
           src={dog.image}
           alt={dog.name}
           fill
-          className="object-cover group-hover:scale-105 transition-transform duration-300"
+          className="object-cover group-hover:scale-105 transition-hover"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-hover" />
         {dog.adopted && (
-          <div className="absolute top-3 right-3 bg-black text-white px-3 py-1 text-xs font-medium rounded">
+          <div className="absolute top-4 right-4 bg-accent-200 text-white px-3 py-1.5 text-xs font-semibold rounded-full shadow-medium">
             Adotado
           </div>
         )}
       </div>
 
-      <div className="p-5">
-        <div className="flex justify-between items-start mb-2">
-          <h3 className="text-xl font-bold group-hover:text-gray-700 transition-colors">
+      <div className="p-6">
+        <div className="flex justify-between items-start mb-3">
+          <h3 className="headline-card group-hover:text-gray-700 transition-hover">
             {dog.name}
           </h3>
-          <span className="text-sm text-gray-500 bg-gray-50 px-2 py-1 rounded">
+          <span className="text-xs text-gray-500 bg-gray-50 px-2.5 py-1 rounded-full font-medium">
             {dog.city}
           </span>
         </div>
 
-        <div className="flex gap-2 mb-3 text-sm text-gray-600">
-          <span className="bg-gray-50 px-2 py-1 rounded">{dog.age}</span>
-          <span className="bg-gray-50 px-2 py-1 rounded">{dog.size}</span>
+        <div className="flex gap-2 mb-4">
+          <span className="text-xs text-gray-500 bg-gray-50 px-2.5 py-1 rounded-full">
+            {dog.age}
+          </span>
+          <span className="text-xs text-gray-500 bg-gray-50 px-2.5 py-1 rounded-full">
+            {dog.size}
+          </span>
         </div>
 
-        <p className="text-gray-700 font-medium mb-2 text-sm">{dog.personality}</p>
-        <p className="text-gray-600 text-sm line-clamp-2">{dog.description}</p>
+        <div className="mb-3">
+          <span className="inline-block text-sm font-medium text-accent-500 bg-accent-50 px-3 py-1 rounded-full">
+            {dog.personality}
+          </span>
+        </div>
+        
+        <p className="text-gray-600 text-sm leading-relaxed line-clamp-2">
+          {dog.description}
+        </p>
       </div>
     </Link>
   )
