@@ -1,9 +1,11 @@
 import mongoose from 'mongoose'
 import Dog from '../models/Dog'
 import HappyStory from '../models/HappyStory'
+import DonationConfig from '../models/DonationConfig'
 import dogsData from '../data/dogs.json'
 
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/amigo-4-patas'
+const CONFIG_ID = 'donation-config'
 
 async function seed() {
   try {
@@ -11,7 +13,7 @@ async function seed() {
     await mongoose.connect(MONGODB_URI)
     console.log('✅ Conectado ao MongoDB!')
 
-    // Limpar dados existentes
+    // Limpar dados existentes (não limpar DonationConfig - admin pode ter configurado)
     console.log('🗑️  Limpando dados existentes...')
     await Dog.deleteMany({})
     await HappyStory.deleteMany({})
@@ -26,6 +28,21 @@ async function seed() {
     console.log('📖 Inserindo histórias felizes...')
     const stories = await HappyStory.insertMany(dogsData.happyStories)
     console.log(`✅ ${stories.length} histórias inseridas!`)
+
+    // Garantir que DonationConfig existe (cria documento inicial se não existir)
+    const existingConfig = await DonationConfig.findById(CONFIG_ID)
+    if (!existingConfig) {
+      await DonationConfig.create({
+        _id: CONFIG_ID,
+        pixKey: '',
+        pixCopiaECola: '',
+        pixQrCodeUrl: '',
+        itemsNeeded: [],
+        deliveryInfo: '',
+        deliveryAddress: '',
+      })
+      console.log('✅ Configuração de doações inicial criada!')
+    }
 
     console.log('\n🎉 Seed concluído com sucesso!')
     console.log(`\n📊 Resumo:`)

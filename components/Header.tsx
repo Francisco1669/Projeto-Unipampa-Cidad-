@@ -2,11 +2,9 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useSession } from 'next-auth/react'
 
 export default function Header() {
   const pathname = usePathname()
-  const { data: session } = useSession()
 
   const isActive = (path: string) => {
     return pathname === path
@@ -48,6 +46,18 @@ export default function Header() {
                 }`}
               >
                 Histórias Felizes
+              </Link>
+            </li>
+            <li>
+              <Link 
+                href="/ajudar" 
+                className={`relative transition-hover ${
+                  isActive('/ajudar') 
+                    ? 'text-black after:absolute after:bottom-[-8px] after:left-0 after:right-0 after:h-0.5 after:bg-accent-200' 
+                    : 'text-gray-600 hover:text-black'
+                }`}
+              >
+                Como Ajudar
               </Link>
             </li>
             <li>

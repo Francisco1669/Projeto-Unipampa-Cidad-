@@ -10,7 +10,7 @@ export default function DogCard({ dog }: DogCardProps) {
   return (
     <Link
       href={`/dog/${dog.id}`}
-      className="group block bg-white border border-gray-100 rounded-lg overflow-hidden hover:shadow-card-hover transition-hover hover:-translate-y-1"
+      className="group block card-elevated overflow-hidden"
     >
       <div className="relative aspect-square overflow-hidden bg-gray-50">
         <Image

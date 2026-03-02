@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import './globals.css'
 import Header from '@/components/Header'
 import { Providers } from './providers'
@@ -28,7 +29,10 @@ export default function RootLayout({
                   <h3 className="text-lg font-semibold mb-4">Nossa Missão</h3>
                   <p className="text-gray-600 text-sm leading-relaxed">
                     Conectar cães abandonados com famílias que querem dar amor. 
-                    Cada adoção é uma nova chance de felicidade.
+                    Cada adoção é uma nova chance de felicidade. Sua ajuda faz diferença —{' '}
+                    <Link href="/ajudar" className="text-accent-500 hover:underline font-medium">
+                      saiba como ajudar
+                    </Link>.
                   </p>
                 </div>
                 <div>

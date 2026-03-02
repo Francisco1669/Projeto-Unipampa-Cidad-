@@ -22,6 +22,12 @@ export default function AdminHeader({ user }: AdminHeaderProps) {
               Painel Admin
             </Link>
             <Link
+              href="/admin/doacoes"
+              className="text-sm text-gray-600 hover:text-black transition-colors"
+            >
+              Doações
+            </Link>
+            <Link
               href="/"
               className="text-sm text-gray-600 hover:text-black transition-colors"
             >
